@@ -1,6 +1,7 @@
 # JavaScript Base-N Id Generator _(@digitalcredentials/bnid)_
 
 [![Node.js CI](https://github.com/digitalcredentials/bnid/workflows/Node.js%20CI/badge.svg)](https://github.com/digitalcredentials/bnid/actions?query=workflow%3A%22Node.js+CI%22)
+[![NPM Version](https://img.shields.io/npm/v/@digitalcredentials/bnid.svg)](https://npm.im/@digitalcredentials/bnid)
 
 > A JavaScript library for Web browsers, React Native, and Node.js apps to generate random
 > ids and encode and decode them using various base-N encodings.
