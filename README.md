@@ -1,8 +1,8 @@
-# JavaScript Base-N Id Generator _(bnid)_
+# JavaScript Base-N Id Generator _(@digitalcredentials/bnid)_
 
-[![Node.js CI](https://github.com/digitalbazaar/bnid/workflows/Node.js%20CI/badge.svg)](https://github.com/digitalbazaar/bnid/actions?query=workflow%3A%22Node.js+CI%22)
+[![Node.js CI](https://github.com/digitalcredentials/bnid/workflows/Node.js%20CI/badge.svg)](https://github.com/digitalcredentials/bnid/actions?query=workflow%3A%22Node.js+CI%22)
 
-> A JavaScript library for Web browsers and Node.js apps to generate random
+> A JavaScript library for Web browsers, React Native, and Node.js apps to generate random
 > ids and encode and decode them using various base-N encodings.
 
 ## Table of Contents
@@ -34,7 +34,7 @@ npm install bnid
 To install locally (for development):
 
 ```
-git clone https://github.com/digitalbazaar/bnid.git
+git clone https://github.com/digitalcredentials/bnid.git
 cd bnid
 npm install
 ```
@@ -236,6 +236,7 @@ secret.
 
 ```js
 import {generateSecretKeySeed} from 'bnid';
+
 const secretKeySeed = await generateSecretKeySeed();
 // Example secretKeySeed: z1Aaj5A4UCsdMpXwdYAReXa4bxWYiKJtdAvB1zMzCHtCbtD
 ```
@@ -253,6 +254,7 @@ be kept secret.
 
 ```js
 import {decodeSecretKeySeed} from 'bnid';
+
 const secretKeySeed = 'z1Aaj5A4UCsdMpXwdYAReXa4bxWYiKJtdAvB1zMzCHtCbtD';
 decoded = decodeSecretKeySeed({secretKeySeed});
 // Example decoded:
@@ -323,18 +325,14 @@ PRs accepted.
 If editing the README, please conform to the
 [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 
-## Commercial Support
-
-Commercial support for this library is available upon request from
-Digital Bazaar: support@digitalbazaar.com
-
 ## License
 
-[BSD-3-Clause](LICENSE.md) © Digital Bazaar
+* MIT License - DCC - TypeScript and ReactNative compatibility.
+* [BSD-3-Clause](LICENSE.md) © Digital Bazaar
 
 [Base16]: https://en.wikipedia.org/wiki/Base16
 [Base58]: https://en.wikipedia.org/wiki/Base58
 [TextDecoder]: https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder
 [TextEncoder]: https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder
-[base58-universal]: https://github.com/digitalbazaar/base58-universal
+[base58-universal]: https://github.com/digitalcredentials/base58-universal
 [multibase]: https://github.com/multiformats/multibase
