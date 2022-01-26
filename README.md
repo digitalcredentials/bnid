@@ -70,7 +70,7 @@ To generate a default [Base58][], 128 bit, non-fixed-length, multibase encoded
 id:
 
 ```js
-import {generateId} from 'bnid';
+import {generateId} from '@digitalcredentials/bnid';
 
 const id = await generateId();
 ```
@@ -78,7 +78,7 @@ const id = await generateId();
 To generate a [Base58][], 128 bit, fixed-length id:
 
 ```js
-import {generateId} from 'bnid';
+import {generateId} from '@digitalcredentials/bnid';
 
 const id = await generateId({
   fixedLength: true
@@ -113,7 +113,7 @@ Some setup overhead can be avoided by using the component `IdGenerator` and
 `IdEncoder` classes.
 
 ```js
-import {IdGenerator, IdEncoder, IdDecoder} from 'bnid';
+import {IdGenerator, IdEncoder, IdDecoder} from '@digitalcredentials/bnid';
 
 // 64 bit random id generator
 const generator = new IdGenerator({
@@ -235,7 +235,7 @@ the key pair can be used as an identifier. The encoded key seed MUST be kept
 secret.
 
 ```js
-import {generateSecretKeySeed} from 'bnid';
+import {generateSecretKeySeed} from '@digitalcredentials/bnid';
 
 const secretKeySeed = await generateSecretKeySeed();
 // Example secretKeySeed: z1Aaj5A4UCsdMpXwdYAReXa4bxWYiKJtdAvB1zMzCHtCbtD
@@ -253,7 +253,7 @@ Decodes an encoded secret key seed into an array of secret key seed bytes
 be kept secret.
 
 ```js
-import {decodeSecretKeySeed} from 'bnid';
+import {decodeSecretKeySeed} from '@digitalcredentials/bnid';
 
 const secretKeySeed = 'z1Aaj5A4UCsdMpXwdYAReXa4bxWYiKJtdAvB1zMzCHtCbtD';
 decoded = decodeSecretKeySeed({secretKeySeed});

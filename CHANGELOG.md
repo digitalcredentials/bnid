@@ -1,5 +1,11 @@
 # bnid ChangeLog
 
+## 2.1.1 - 
+
+### Changed
+- Remove runtime `esm` transpiler usage, add support for Typescript
+  and React Native.
+
 ## 2.1.0 - 2021-11-18
 
 ### Added
