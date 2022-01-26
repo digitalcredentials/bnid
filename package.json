@@ -1,5 +1,5 @@
 {
-  "name": "bnid",
+  "name": "@digitalcredentials/bnid",
   "version": "2.1.1-0",
   "description": "Base-N Id Generator",
   "license": "BSD-3-Clause",
