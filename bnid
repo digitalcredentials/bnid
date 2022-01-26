@@ -3,7 +3,7 @@
  * Copyright (c) 2020 Digital Bazaar, Inc. All rights reserved.
  */
 
-const bnid = require('.');
+const bnid = require('./dist/index.js');
 
 async function main() {
   const args = require('yargs')

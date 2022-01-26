@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2021 Digital Bazaar, Inc. All rights reserved.
  */
 module.exports = function(config) {
 
@@ -13,8 +13,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'tests/test-karma.js',
-      'tests/*.spec.js'
+      'test/*.spec.js'
     ],
 
     // list of files to exclude
@@ -23,8 +22,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      //'tests/*.js': ['webpack', 'babel', 'sourcemap']
-      'tests/*.js': ['webpack', 'sourcemap']
+      'test/*.js': ['webpack', 'sourcemap']
     },
 
     webpack: {
@@ -32,10 +30,14 @@ module.exports = function(config) {
       mode: 'development',
       devtool: 'inline-source-map',
       node: {
-        Buffer: false,
-        process: false,
-        crypto: false,
-        setImmediate: false
+        global: true
+      },
+      resolve: {
+        fallback: {
+          url: false,
+          util: false,
+          crypto: false
+        }
       }
     },
 
@@ -56,7 +58,7 @@ module.exports = function(config) {
     //   config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
-    // enable / disable watching file and executing tests whenever any
+    // enable / disable watching file and executing test whenever any
     // file changes
     autoWatch: false,
 
@@ -65,19 +67,8 @@ module.exports = function(config) {
     //browsers: ['ChromeHeadless', 'Chrome', 'Firefox', 'Safari'],
     browsers: ['ChromeHeadless'],
 
-    customLaunchers: {
-      IE9: {
-        base: 'IE',
-        'x-ua-compatible': 'IE=EmulateIE9'
-      },
-      IE8: {
-        base: 'IE',
-        'x-ua-compatible': 'IE=EmulateIE8'
-      }
-    },
-
     // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
+    // if true, Karma captures browsers, runs the test and exits
     singleRun: true,
 
     // Concurrency level

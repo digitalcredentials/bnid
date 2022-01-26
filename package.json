@@ -16,62 +16,92 @@
   "bugs": {
     "url": "https://github.com/digitalbazaar/bnid/issues"
   },
-  "keywords": [
-    "id",
-    "identifier",
-    "random"
-  ],
-  "main": "index.js",
-  "module": "main.js",
-  "browser": {
-    "./util.js": "./util-browser.js"
-  },
-  "bin": "./bnid",
-  "engines": {
-    "node": ">=10"
-  },
-  "scripts": {
-    "test": "npm run test-node",
-    "test-node": "cross-env NODE_ENV=test mocha -r esm --preserve-symlinks -t 30000 -A -R ${REPORTER:-spec} tests/*.spec.js",
-    "test-karma": "karma start karma.conf.js",
-    "test-watch": "cross-env NODE_ENV=test mocha -r esm --watch --preserve-symlinks -t 30000 -A -R ${REPORTER:-spec} tests/*.spec.js",
-    "benchmark": "node tests/benchmark.js",
-    "coverage": "cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text-summary npm run test-node",
-    "coverage-ci": "cross-env NODE_ENV=test nyc --reporter=lcovonly npm run test-node",
-    "coverage-report": "nyc report",
-    "lint": "eslint ."
-  },
   "files": [
-    "index.js",
-    "main.js",
-    "util-browser.js",
-    "util.js"
+    "dist",
+    "lib",
+    "rollup.config.js",
+    "build-dist.sh",
+    "README.md",
+    "LICENSE"
   ],
+  "main": "dist/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/esm/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "dependencies": {
-    "base58-universal": "^1.0.0",
-    "esm": "^3.2.22",
+    "@digitalcredentials/base58-universal": "^1.0.1",
+    "react-native-securerandom": "^1.0.0",
     "yargs": "^15.3.1"
   },
   "devDependencies": {
     "benchmark": "^2.1.4",
     "chai": "^4.2.0",
     "chai-bytes": "^0.1.2",
-    "cross-env": "^6.0.3",
+    "cross-env": "^7.0.3",
     "eslint": "^7.0.0",
     "eslint-config-digitalbazaar": "^2.5.0",
     "eslint-plugin-jsdoc": "^25.4.2",
-    "karma": "^5.0.9",
+    "esm": "^3.2.25",
+    "karma": "^6.3.12",
+    "karma-babel-preprocessor": "^8.0.1",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^3.1.0",
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
-    "karma-sourcemap-loader": "^0.3.7",
-    "karma-webpack": "^4.0.2",
-    "mocha": "^7.1.2",
+    "karma-sourcemap-loader": "^0.3.8",
+    "karma-webpack": "^5.0.0",
+    "mocha": "^8.3.2",
     "mocha-lcov-reporter": "^1.3.0",
     "nyc": "^15.0.0",
-    "webpack": "^4.43.0"
+    "rimraf": "^3.0.2",
+    "rollup": "^2.47.0",
+    "webpack": "^5.36.2",
+    "webpack-bundle-analyzer": "^4.4.1",
+    "webpack-cli": "^4.6.0"
   },
+  "browser": {
+    "./lib/util.js": "./lib/util-browser.js",
+    "./dist/util.js": "./dist/util-browser.js",
+    "buffer": false,
+    "crypto": false,
+    "util": false
+  },
+  "react-native": {
+    "buffer": false,
+    "crypto": false,
+    "util": false,
+    "./lib/util.js": "./lib/util-reactnative.js",
+    "./dist/util.js": "./dist/util-reactnative.js"
+  },
+  "bin": "./bnid",
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "rollup": "rollup -c rollup.config.js",
+    "build": "npm run clear && npm run rollup && ./build-dist.sh",
+    "clear": "rimraf dist/*",
+    "prepare": "npm run build",
+    "prepack": "npm run build",
+    "rebuild": "npm run clear && npm run build",
+    "test": "npm run lint && npm run test-node && npm run test-karma",
+    "test-node": "cross-env NODE_ENV=test mocha -r esm --preserve-symlinks -t 10000 test/*.spec.js",
+    "test-karma": "karma start karma.conf.js",
+    "coverage": "cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text-summary npm run test-node",
+    "coverage-ci": "cross-env NODE_ENV=test nyc --reporter=lcovonly npm run test-node",
+    "coverage-report": "nyc report",
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "id",
+    "identifier",
+    "random"
+  ],
   "nyc": {
     "exclude": [
       "tests"
