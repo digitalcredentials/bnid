@@ -22,5 +22,16 @@ export default [
       }
     ],
     external: Object.keys(pkg.dependencies).concat(['crypto', 'util'])
+  },
+  {
+    input: './lib/util-reactnative.js',
+    output: [
+      {
+        dir: 'dist',
+        format: 'cjs',
+        preserveModules: true
+      }
+    ],
+    external: Object.keys(pkg.dependencies).concat(['crypto', 'util'])
   }
 ];
