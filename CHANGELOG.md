@@ -1,6 +1,11 @@
 # bnid ChangeLog
 
-## 2.1.1 - 
+## 2.1.2 - 2022-01-28
+
+### Changed
+- Fix Rollup config for React Native.
+
+## 2.1.1 - 2022-01-26
 
 ### Changed
 - Remove runtime `esm` transpiler usage, add support for Typescript
