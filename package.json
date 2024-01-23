@@ -35,8 +35,7 @@
   },
   "dependencies": {
     "@digitalcredentials/base58-universal": "^1.0.1",
-    "react-native-securerandom": "^1.0.0",
-    "yargs": "^15.3.1"
+    "react-native-securerandom": "^1.0.0"
   },
   "devDependencies": {
     "benchmark": "^2.1.4",

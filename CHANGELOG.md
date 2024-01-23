@@ -1,5 +1,12 @@
 # bnid ChangeLog
 
+## 3.0.0 -
+
+### Removed
+- **BREAKING**: Move command line client into
+  [`bnid-cli`](https://github.com/digitalbazaar/bnid-cli). The primary reason
+  is to reduce `bnid` dependencies.
+
 ## 2.1.2 - 2022-01-28
 
 ### Changed
