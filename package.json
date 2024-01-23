@@ -1,6 +1,6 @@
 {
   "name": "@digitalcredentials/bnid",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Base-N Id Generator",
   "license": "BSD-3-Clause",
   "author": {
@@ -78,7 +78,7 @@
     "./dist/util.js": "./dist/util-reactnative.js"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "scripts": {
     "rollup": "rollup -c rollup.config.js",
