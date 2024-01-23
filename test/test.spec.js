@@ -20,7 +20,7 @@ import {
   maxEncodedIdBytes,
   generateSecretKeySeed,
   decodeSecretKeySeed,
-} from '..';
+} from '../lib/index.js';
 
 describe('bnid', () => {
   describe('utilities', () => {

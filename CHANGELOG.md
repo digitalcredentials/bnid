@@ -1,5 +1,10 @@
 # bnid ChangeLog
 
+## 3.0.1 -
+
+### Changed
+- Replace `@digitalcredentials/base58-universal` with `base-x` dependency.
+
 ## 3.0.0 - 2024-01-23
 
 ### Removed
