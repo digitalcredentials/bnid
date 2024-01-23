@@ -34,7 +34,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@digitalcredentials/base58-universal": "^1.0.1",
+    "base-x": "^4.0.0",
     "react-native-securerandom": "^1.0.0"
   },
   "devDependencies": {
@@ -77,7 +77,6 @@
     "./lib/util.js": "./lib/util-reactnative.js",
     "./dist/util.js": "./dist/util-reactnative.js"
   },
-  "bin": "./bnid",
   "engines": {
     "node": ">=14"
   },
