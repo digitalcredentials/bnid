@@ -1,9 +1,9 @@
-# JavaScript Base-N Id Generator _(@digitalcredentials/bnid)_
+# JS/TS Base-N Id Generator _(@digitalcredentials/bnid)_
 
 [![Node.js CI](https://github.com/digitalcredentials/bnid/workflows/Node.js%20CI/badge.svg)](https://github.com/digitalcredentials/bnid/actions?query=workflow%3A%22Node.js+CI%22)
 [![NPM Version](https://img.shields.io/npm/v/@digitalcredentials/bnid.svg)](https://npm.im/@digitalcredentials/bnid)
 
-> A JavaScript library for Web browsers, React Native, and Node.js apps to generate random
+> A Typescript/JavaScript library for Web browsers, React Native, and Node.js apps to generate random
 > ids and encode and decode them using various base-N encodings.
 
 ## Table of Contents
@@ -19,15 +19,15 @@
 
 ## Background
 
-This library provides tools for Web and Node.js to generate random ids and
-encode and decode them in various base-N encodings.
+This library provides tools for Web browsers, React Native, and Node.js apps to
+generate random ids and encode and decode them in various base-N encodings.
 
 ## Install
 
 ### NPM
 
 ```
-npm install bnid
+npm install @digitalcredentials/bnid
 ```
 
 ### Git
@@ -92,7 +92,7 @@ Some setup overhead can be avoided by using the component `IdGenerator` and
 `IdEncoder` classes.
 
 ```js
-import {IdGenerator, IdEncoder} from 'bnid';
+import { IdGenerator, IdEncoder } from 'bnid';
 
 // 64 bit random id generator
 const generator = new IdGenerator({
