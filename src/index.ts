@@ -1,111 +1,124 @@
 /*!
  * Copyright (c) 2020 Digital Bazaar, Inc. All rights reserved.
  */
-import {base58btc} from './baseX.js';
+import { base58btc } from './baseX.js'
 import {
   getRandomBytes,
   bytesToHex,
   bytesFromHex
-} from './util.js';
+} from './util.js'
 
 // multihash identity function code
-const MULTIHASH_IDENTITY_FUNCTION_CODE = 0x00;
+const MULTIHASH_IDENTITY_FUNCTION_CODE = 0x00
 
-function _calcOptionsBitLength({
+function _calcOptionsBitLength ({
   defaultLength,
   // TODO: allow any bit length
   minLength = 8,
   // TODO: support maxLength
-  //maxLength = Infinity,
+  // maxLength = Infinity,
   bitLength
-}) {
-  if(bitLength === undefined) {
-    return defaultLength;
+}: { defaultLength: number, minLength?: number, bitLength?: number }): number {
+  if (bitLength === undefined) {
+    return defaultLength
   }
   // TODO: allow any bit length
-  if(bitLength % 8 !== 0) {
-    throw new Error('Bit length must be a multiple of 8.');
+  if (bitLength % 8 !== 0) {
+    throw new Error('Bit length must be a multiple of 8.')
   }
-  if(bitLength < minLength) {
-    throw new Error(`Minimum bit length is ${minLength}.`);
+  if (bitLength < minLength) {
+    throw new Error(`Minimum bit length is ${minLength}.`)
   }
   // TODO: support maxLength
-  //if(bitLength > maxLength) {
+  // if(bitLength > maxLength) {
   //  throw new Error(`Maximum bit length is ${maxLength}.`);
-  //}
-  return bitLength;
+  // }
+  return bitLength
 }
 
-function _calcDataBitLength({
+function _calcDataBitLength ({
   bitLength,
   maxLength
-}) {
-  if(maxLength === 0) {
-    return bitLength;
+}: { bitLength: number, maxLength?: number }): number {
+  if (maxLength === 0) {
+    return bitLength
   }
-  if(bitLength > maxLength) {
-    throw new Error(`Input length greater than ${maxLength} bits.`);
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  if (maxLength && bitLength > maxLength) {
+    throw new Error(`Input length greater than ${maxLength} bits.`)
   }
-  return maxLength;
+  // @ts-expect-error
+  return maxLength
 }
 
-function _bytesWithBitLength({
+function _bytesWithBitLength ({
   bytes,
   bitLength
-}) {
-  const length = bytes.length * 8;
-  if(length === bitLength) {
-    return bytes;
+}: { bytes: Uint8Array, bitLength: number }): Uint8Array {
+  const length = bytes.length * 8
+  if (length === bitLength) {
+    return bytes
   }
-  if(length < bitLength) {
+  if (length < bitLength) {
     // pad start
-    const data = new Uint8Array(bitLength / 8);
-    data.set(bytes, data.length - bytes.length);
-    return data;
+    const data = new Uint8Array(bitLength / 8)
+    data.set(bytes, data.length - bytes.length)
+    return data
   }
   // trim start, ensure trimmed data is zero
-  const start = (length - bitLength) / 8;
-  if(bytes.subarray(0, start).some(d => d !== 0)) {
+  const start = (length - bitLength) / 8
+  if (bytes.subarray(0, start).some(d => d !== 0)) {
     throw new Error(
-      `Data length greater than ${bitLength} bits.`);
+      `Data length greater than ${bitLength} bits.`)
   }
-  return bytes.subarray(start);
+  return bytes.subarray(start)
 }
 
-const _log2_16 = 4;
-function _base16Encoder({bytes, idEncoder}) {
-  let encoded = bytesToHex(bytes);
-  if(idEncoder.encoding === 'base16upper') {
-    encoded = encoded.toUpperCase();
+export interface IEncoder {
+  bytes: Uint8Array
+  idEncoder: IdEncoder
+}
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const _log2_16 = 4
+
+function _base16Encoder ({ bytes, idEncoder }: IEncoder): string {
+  let encoded = bytesToHex(bytes)
+  if (idEncoder.encoding === 'base16upper') {
+    encoded = encoded.toUpperCase()
   }
-  if(idEncoder.fixedLength) {
+  if (idEncoder.fixedLength && idEncoder.fixedLength !== undefined) {
     const fixedBitLength = _calcDataBitLength({
       bitLength: bytes.length * 8,
       maxLength: idEncoder.fixedBitLength
-    });
-    const wantLength = Math.ceil(fixedBitLength / _log2_16);
+    })
+    const wantLength = Math.ceil(fixedBitLength / _log2_16)
     // pad start with 0s
-    return encoded.padStart(wantLength, '0');
+    return encoded.padStart(wantLength, '0')
   }
-  return encoded;
+  return encoded
 }
 
-const _log2_58 = Math.log2(58);
-function _base58Encoder({bytes, idEncoder}) {
-  const encoded = base58btc.encode(bytes);
-  if(idEncoder.fixedLength) {
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const _log2_58 = Math.log2(58)
+
+function _base58Encoder ({ bytes, idEncoder }: IEncoder): string {
+  const encoded = base58btc.encode(bytes)
+  if (idEncoder.fixedLength) {
     const fixedBitLength = _calcDataBitLength({
       bitLength: bytes.length * 8,
       maxLength: idEncoder.fixedBitLength
-    });
-    const wantLength = Math.ceil(fixedBitLength / _log2_58);
+    })
+    const wantLength = Math.ceil(fixedBitLength / _log2_58)
     // pad start with 0s (encoded as '1's)
-    return encoded.padStart(wantLength, '1');
+    return encoded.padStart(wantLength, '1')
   }
-  return encoded;
+  return encoded
 }
 
 export class IdGenerator {
+  public bitLength: number
+
   /**
    * Creates a new IdGenerator instance.
    *
@@ -116,16 +129,16 @@ export class IdGenerator {
    *
    * @returns {IdGenerator} - New IdGenerator.
    */
-  constructor({
+  constructor ({
     bitLength
-  } = {}) {
+  }: { bitLength?: number } = {}) {
     this.bitLength = _calcOptionsBitLength({
       // default to 128 bits / 16 bytes
       defaultLength: 128,
       // TODO: allow any bit length
       minLength: 8,
-      bitLength,
-    });
+      bitLength
+    })
   }
 
   /**
@@ -133,14 +146,31 @@ export class IdGenerator {
    *
    * @returns {Uint8Array} - Array of random id bytes.
    */
-  async generate() {
-    const buf = new Uint8Array(this.bitLength / 8);
-    await getRandomBytes(buf);
-    return buf;
+  async generate (): Promise<Uint8Array> {
+    const buf = new Uint8Array(this.bitLength / 8)
+    await getRandomBytes(buf)
+    return buf
   }
 }
 
+export interface IIdEncoder {
+  encoding?: string
+  fixedLength?: boolean
+  fixedBitLength?: number
+  bitLength?: number
+  multibase?: boolean
+  multihash?: boolean
+}
+
 export class IdEncoder {
+  public encoder: ({ bytes, idEncoder }: IEncoder) => string
+  public encoding: string
+  public multibasePrefix: string
+  public fixedLength: boolean
+  public fixedBitLength?: number
+  public multibase: boolean = true
+  public multihash: boolean = false
+
   /**
    * Creates a new IdEncoder instance.
    *
@@ -157,42 +187,42 @@ export class IdEncoder {
    *
    * @returns {IdEncoder} - New IdEncoder.
    */
-  constructor({
+  constructor ({
     encoding = 'base58',
     fixedLength = false,
     fixedBitLength,
     multibase = true,
-    multihash = false,
-  } = {}) {
-    switch(encoding) {
+    multihash = false
+  }: IIdEncoder = {}) {
+    switch (encoding) {
       case 'hex':
       case 'base16':
-        this.encoder = _base16Encoder;
-        this.multibasePrefix = 'f';
-        break;
+        this.encoder = _base16Encoder
+        this.multibasePrefix = 'f'
+        break
       case 'base16upper':
-        this.encoder = _base16Encoder;
-        this.multibasePrefix = 'F';
-        break;
+        this.encoder = _base16Encoder
+        this.multibasePrefix = 'F'
+        break
       case 'base58':
       case 'base58btc':
-        this.encoder = _base58Encoder;
-        this.multibasePrefix = 'z';
-        break;
+        this.encoder = _base58Encoder
+        this.multibasePrefix = 'z'
+        break
       default:
-        throw new Error(`Unknown encoding type: "${encoding}".`);
+        throw new Error(`Unknown encoding type: "${encoding}".`)
     }
-    this.fixedLength = fixedLength || fixedBitLength !== undefined;
-    if(this.fixedLength) {
+    this.fixedLength = fixedLength || fixedBitLength !== undefined
+    if (this.fixedLength) {
       this.fixedBitLength = _calcOptionsBitLength({
         // default of 0 calculates from input size
         defaultLength: 0,
         bitLength: fixedBitLength
-      });
+      })
     }
-    this.encoding = encoding;
-    this.multibase = multibase;
-    this.multihash = multihash;
+    this.encoding = encoding
+    this.multibase = multibase
+    this.multihash = multihash
   }
 
   /**
@@ -202,33 +232,47 @@ export class IdEncoder {
    *
    * @returns {string} - Encoded string.
    */
-  encode(bytes) {
-    if(this.multihash) {
-      const byteSize = bytes.length;
+  encode (bytes: Uint8Array): string {
+    if (this.multihash) {
+      const byteSize = bytes.length
 
-      if(byteSize > 127) {
-        throw new RangeError('Identifier size too large.');
+      if (byteSize > 127) {
+        throw new RangeError('Identifier size too large.')
       }
       // <varint hash fn code> <varint digest size in bytes> <hash fn output>
       //  <identity function>             <byte size>                <raw bytes>
-      const multihash = new Uint8Array(2 + byteSize);
+      const multihash = new Uint8Array(2 + byteSize)
       // <varint hash fn code>: identity function
-      multihash.set([MULTIHASH_IDENTITY_FUNCTION_CODE]);
+      multihash.set([MULTIHASH_IDENTITY_FUNCTION_CODE])
       // <varint digest size in bytes>
-      multihash.set([byteSize], 1);
+      multihash.set([byteSize], 1)
       // <hash fn output>: identifier bytes
-      multihash.set(bytes, 2);
-      bytes = multihash;
+      multihash.set(bytes, 2)
+      bytes = multihash
     }
-    const encoded = this.encoder({bytes, idEncoder: this});
-    if(this.multibase) {
-      return this.multibasePrefix + encoded;
+    const encoded = this.encoder({ bytes, idEncoder: this })
+    if (this.multibase) {
+      return this.multibasePrefix + encoded
     }
-    return encoded;
+    return encoded
   }
 }
 
+export interface IIdDecoder {
+  encoding?: string
+  fixedBitLength?: number
+  multibase?: boolean
+  multihash?: boolean
+  expectedSize?: number
+}
+
 export class IdDecoder {
+  public encoding: string
+  public fixedBitLength?: number = 0
+  public multibase: boolean
+  public multihash: boolean
+  public expectedSize: number
+
   /**
    * Creates a new IdDecoder instance.
    *
@@ -250,18 +294,18 @@ export class IdDecoder {
    *   check.
    * @returns {IdDecoder} - New IdDecoder.
    */
-  constructor({
+  constructor ({
     encoding = 'base58',
-    fixedBitLength,
+    fixedBitLength = 0,
     multibase = true,
     multihash = false,
     expectedSize = 32
-  } = {}) {
-    this.encoding = encoding;
-    this.fixedBitLength = fixedBitLength;
-    this.multibase = multibase;
-    this.multihash = multihash;
-    this.expectedSize = expectedSize;
+  }: IIdDecoder = {}) {
+    this.encoding = encoding
+    this.fixedBitLength = fixedBitLength
+    this.multibase = multibase
+    this.multihash = multihash
+    this.expectedSize = expectedSize
   }
 
   /**
@@ -271,85 +315,89 @@ export class IdDecoder {
    *
    * @returns {Uint8Array} - Array of decoded id bytes.
    */
-  decode(id) {
-    let encoding;
-    let data;
-    if(this.multibase) {
-      if(id.length < 1) {
-        throw new Error('Multibase encoding not found.');
+  decode (id: string): Uint8Array {
+    let encoding
+    let data
+    if (this.multibase) {
+      if (id.length < 1) {
+        throw new Error('Multibase encoding not found.')
       }
-      const prefix = id[0];
-      data = id.substring(1);
-      switch(id[0]) {
+      const prefix = id[0]
+      data = id.substring(1)
+      switch (id[0]) {
         case 'f':
-          encoding = 'base16';
-          break;
+          encoding = 'base16'
+          break
         case 'F':
-          encoding = 'base16upper';
-          break;
+          encoding = 'base16upper'
+          break
         case 'z':
-          encoding = 'base58';
-          break;
+          encoding = 'base58'
+          break
         default:
-          throw new Error(`Unknown multibase prefix "${prefix}".`);
+          throw new Error(`Unknown multibase prefix "${prefix}".`)
       }
     } else {
-      encoding = this.encoding;
-      data = id;
+      encoding = this.encoding
+      data = id
     }
-    let decoded;
-    switch(encoding) {
+    let decoded
+    switch (encoding) {
       case 'hex':
       case 'base16':
       case 'base16upper':
-        if(data.length % 2 !== 0) {
-          throw new Error('Invalid base16 data length.');
+        if (data.length % 2 !== 0) {
+          throw new Error('Invalid base16 data length.')
         }
-        decoded = bytesFromHex(data);
-        break;
+        decoded = bytesFromHex(data)
+        break
       case 'base58':
-        decoded = base58btc.decode(data);
-        break;
+        decoded = base58btc.decode(data)
+        break
       default:
-        throw new Error(`Unknown encoding "${encoding}".`);
+        throw new Error(`Unknown encoding "${encoding}".`)
     }
-    if(!decoded) {
-      throw new Error(`Invalid encoded data "${data}".`);
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (!decoded) {
+      throw new Error(`Invalid encoded data "${data}".`)
     }
-    if(this.fixedBitLength) {
+
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (this.fixedBitLength) {
       return _bytesWithBitLength({
         bytes: decoded,
-        bitLength: this.fixedBitLength
-      });
+        bitLength: this.fixedBitLength ?? 0
+      })
     }
-    if(this.multihash) {
+    if (this.multihash) {
       // <varint hash fn code>: identity function
-      const [hashFnCode] = decoded;
+      const [hashFnCode] = decoded
 
-      if(hashFnCode !== MULTIHASH_IDENTITY_FUNCTION_CODE) {
-        throw new Error('Invalid multihash function code.');
+      if (hashFnCode !== MULTIHASH_IDENTITY_FUNCTION_CODE) {
+        throw new Error('Invalid multihash function code.')
       }
       // <varint digest size in bytes>
-      const digestSize = decoded[1];
+      const digestSize = decoded[1]
 
-      if(digestSize > 127) {
-        throw new RangeError('Decoded identifier size too large.');
+      if (digestSize > 127) {
+        throw new RangeError('Decoded identifier size too large.')
       }
 
-      const bytes = decoded.subarray(2);
+      const bytes = decoded.subarray(2)
 
-      if(bytes.byteLength !== digestSize) {
-        throw new RangeError('Unexpected identifier size.');
+      if (bytes.byteLength !== digestSize) {
+        throw new RangeError('Unexpected identifier size.')
       }
-      if(this.expectedSize && bytes.byteLength !== this.expectedSize) {
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      if (this.expectedSize && bytes.byteLength !== this.expectedSize) {
         throw new RangeError(
-          `Invalid decoded identifier size. Identifier must be ` +
-            `"${this.expectedSize}" bytes.`);
+          'Invalid decoded identifier size. Identifier must be ' +
+            `"${this.expectedSize}" bytes.`)
       }
 
-      decoded = bytes;
+      decoded = bytes
     }
-    return decoded;
+    return decoded
   }
 }
 
@@ -361,9 +409,9 @@ export class IdDecoder {
  *
  * @returns {string} - Encoded string id.
  */
-export async function generateId(options) {
+export async function generateId (options: IIdEncoder): Promise<string> {
   return new IdEncoder(options)
-    .encode(await new IdGenerator(options).generate());
+    .encode(await new IdGenerator(options).generate())
 }
 
 /**
@@ -375,8 +423,8 @@ export async function generateId(options) {
  *
  * @returns {Uint8Array} - Decoded array of id bytes.
  */
-export function decodeId(options) {
-  return new IdDecoder(options).decode(options.id);
+export function decodeId (options: IIdDecoder & { id: string }): Uint8Array {
+  return new IdDecoder(options).decode(options.id)
 }
 
 /**
@@ -389,26 +437,26 @@ export function decodeId(options) {
  *
  * @returns {number} - The minimum number of encoded bytes.
  */
-export function minEncodedIdBytes({
+export function minEncodedIdBytes ({
   encoding = 'base58',
   bitLength = 128,
   multibase = true
-} = {}) {
-  let plainBytes;
-  switch(encoding) {
+}: IIdEncoder = {}): number {
+  let plainBytes
+  switch (encoding) {
     case 'hex':
     case 'base16':
     case 'base16upper':
-      plainBytes = bitLength / 4;
-      break;
+      plainBytes = bitLength / 4
+      break
     case 'base58':
     case 'base58btc':
-      plainBytes = bitLength / 8;
-      break;
+      plainBytes = bitLength / 8
+      break
     default:
-      throw new Error(`Unknown encoding type: "${encoding}".`);
+      throw new Error(`Unknown encoding type: "${encoding}".`)
   }
-  return plainBytes + (multibase ? 1 : 0);
+  return plainBytes + (multibase ? 1 : 0)
 }
 
 /**
@@ -421,26 +469,26 @@ export function minEncodedIdBytes({
  *
  * @returns {number} - The maximum number of encoded bytes.
  */
-export function maxEncodedIdBytes({
+export function maxEncodedIdBytes ({
   encoding = 'base58',
   bitLength = 128,
   multibase = true
-} = {}) {
-  let plainBytes;
-  switch(encoding) {
+}: IIdEncoder = {}): number {
+  let plainBytes
+  switch (encoding) {
     case 'hex':
     case 'base16':
     case 'base16upper':
-      plainBytes = bitLength / 4;
-      break;
+      plainBytes = bitLength / 4
+      break
     case 'base58':
     case 'base58btc':
-      plainBytes = Math.ceil(bitLength / Math.log2(58));
-      break;
+      plainBytes = Math.ceil(bitLength / Math.log2(58))
+      break
     default:
-      throw new Error(`Unknown encoding type: "${encoding}".`);
+      throw new Error(`Unknown encoding type: "${encoding}".`)
   }
-  return plainBytes + (multibase ? 1 : 0);
+  return plainBytes + (multibase ? 1 : 0)
 }
 
 /**
@@ -456,20 +504,20 @@ export function maxEncodedIdBytes({
 
  * @returns {string} - Secret key seed encoded as a string.
  */
-export async function generateSecretKeySeed({
+export async function generateSecretKeySeed ({
   bitLength = 32 * 8,
   encoding = 'base58',
   multibase = true,
   multihash = true
-} = {}) {
+}: IIdEncoder = {}): Promise<string> {
   // reuse `generateId` for convenience, but a key seed is *SECRET* and
   // not an identifier itself, rather it is used to generate an identifier via
   // a public key
   // Note: Setting fixedLength to false even though that's the (current)
   // default as not using a fixed length of false for a seed is a security
   // problem
-  return generateId(
-    {bitLength, encoding, fixedLength: false, multibase, multihash});
+  return await generateId(
+    { bitLength, encoding, fixedLength: false, multibase, multihash })
 }
 
 /**
@@ -488,13 +536,13 @@ export async function generateSecretKeySeed({
  * @returns {Uint8Array} - An array of secret key seed bytes (default size:
  *   32 bytes).
  */
-export function decodeSecretKeySeed({
+export function decodeSecretKeySeed ({
   multibase = true,
   multihash = true,
   expectedSize = 32,
-  secretKeySeed,
-}) {
+  secretKeySeed
+}: { multibase?: boolean, multihash?: boolean, expectedSize?: number, secretKeySeed: string }): Uint8Array {
   // reuse `decodeId` for convenience, but key seed bytes are *SECRET* and
   // are NOT identifiers, they are used to generate identifiers from public keys
-  return decodeId({multihash, multibase, expectedSize, id: secretKeySeed});
+  return decodeId({ multihash, multibase, expectedSize, id: secretKeySeed })
 }
