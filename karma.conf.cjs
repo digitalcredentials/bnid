@@ -1,8 +1,7 @@
 /*
- * Copyright (c) 2021 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2020-2022 Digital Bazaar, Inc. All rights reserved.
  */
-module.exports = function(config) {
-
+module.exports = function (config) {
   config.set({
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
@@ -13,7 +12,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/*.spec.js'
+      'test/*.spec.mjs'
     ],
 
     // list of files to exclude
@@ -22,29 +21,19 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/*.js': ['webpack', 'sourcemap']
+      // 'tests/*.js': ['webpack', 'babel', 'sourcemap']
+      'test/*.mjs': ['webpack', 'sourcemap']
     },
 
     webpack: {
-      //mode: 'production',
       mode: 'development',
-      devtool: 'inline-source-map',
-      node: {
-        global: true
-      },
-      resolve: {
-        fallback: {
-          url: false,
-          util: false,
-          crypto: false
-        }
-      }
+      devtool: 'inline-source-map'
     },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    //reporters: ['progress'],
+    // reporters: ['progress'],
     reporters: ['mocha'],
 
     // web server port
@@ -58,17 +47,17 @@ module.exports = function(config) {
     //   config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
-    // enable / disable watching file and executing test whenever any
+    // enable / disable watching file and executing tests whenever any
     // file changes
     autoWatch: false,
 
     // start these browsers
     // browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    //browsers: ['ChromeHeadless', 'Chrome', 'Firefox', 'Safari'],
+    // browsers: ['ChromeHeadless', 'Chrome', 'Firefox', 'Safari'],
     browsers: ['ChromeHeadless'],
 
     // Continuous Integration mode
-    // if true, Karma captures browsers, runs the test and exits
+    // if true, Karma captures browsers, runs the tests and exits
     singleRun: true,
 
     // Concurrency level
@@ -81,8 +70,8 @@ module.exports = function(config) {
         // increase from default 2s
         timeout: 10000,
         reporter: 'html'
-        //delay: true
+        // delay: true
       }
     }
-  });
-};
+  })
+}

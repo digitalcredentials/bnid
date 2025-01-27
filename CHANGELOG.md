@@ -1,5 +1,10 @@
 # bnid ChangeLog
 
+## 4.0.0 -
+
+### Changed
+- **BREAKING**: Convert to Typescript (still also exports Javascript).
+
 ## 3.0.1 - 2024-01-23
 
 ### Changed
