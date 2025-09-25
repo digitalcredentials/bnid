@@ -12,6 +12,6 @@ export function bytesToHex (bytes: Uint8Array): string {
   return Buffer.from(bytes).toString('hex')
 }
 
-export function bytesFromHex (hex: string): Buffer {
-  return Buffer.from(hex, 'hex')
+export function bytesFromHex (hex: string): Uint8Array {
+  return new Uint8Array(Buffer.from(hex, 'hex'))
 }
