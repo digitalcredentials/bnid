@@ -1,6 +1,11 @@
 # bnid ChangeLog
 
-## 4.0.0 -
+## 5.0.0 - 2026-05-24
+
+### Changed
+- Bump `base-x` dependency to latest (v5.0.0).
+
+## 4.0.0 - 2025-05-16
 
 ### Changed
 - **BREAKING**: Convert to Typescript (still also exports Javascript).
